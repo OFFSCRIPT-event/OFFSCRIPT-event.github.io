@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<title>OFFSCRIPT · Door</title>
+<meta name="robots" content="noindex, nofollow">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="OFFSCRIPT Door">
+<link rel="apple-touch-icon" href="../assets/icon-180.png">
+<base target="_top">
+<meta charset="utf-8">
+<style>
+  :root {
+    --bg:#0B0B0C; --surface:#151517; --surface2:#1C1C1F; --hair:rgba(255,255,255,.07);
+    --text:#F5F5F7; --sub:#8E8E93; --faint:#5A5A60; --ok:#32D74B; --okbg:rgba(50,215,75,.14); --warn:#FF453A;
+    --r:16px;
+  }
+  * { box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+  html,body { margin:0; background:var(--bg); color:var(--text);
+    font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","Inter","Segoe UI",system-ui,sans-serif;
+    -webkit-font-smoothing:antialiased; }
+  .wrap { max-width:560px; margin:0 auto; padding:18px 18px 48px; }
+
+  /* header */
+  .head { display:flex; align-items:center; justify-content:space-between; margin:6px 0 22px; }
+  .brand { font-size:13px; font-weight:700; letter-spacing:.22em; }
+  .brand em { font-style:normal; color:var(--sub); font-weight:500; letter-spacing:.04em; margin-left:6px; text-transform:none; }
+  .live { display:flex; align-items:center; gap:6px; font-size:12px; color:var(--sub); font-variant-numeric:tabular-nums; }
+  .dot { width:7px; height:7px; border-radius:50%; background:var(--ok); box-shadow:0 0 0 3px rgba(50,215,75,.18); }
+  .live.off .dot { background:var(--warn); box-shadow:0 0 0 3px rgba(255,69,58,.18); }
+
+  /* stats */
+  .stats { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:18px; }
+  .stat { background:var(--surface); border:1px solid var(--hair); border-radius:var(--r); padding:14px 16px 16px; }
+  .stat .lbl { font-size:12px; color:var(--sub); font-weight:500; }
+  .stat .num { font-size:32px; font-weight:700; letter-spacing:-.02em; margin-top:6px; font-variant-numeric:tabular-nums; }
+  .stat .num span { font-size:17px; color:var(--faint); font-weight:600; margin-left:2px; }
+  .bar { height:4px; border-radius:4px; background:rgba(255,255,255,.08); margin-top:12px; overflow:hidden; }
+  .bar i { display:block; height:100%; width:0; background:var(--text); border-radius:4px; transition:width .4s ease; }
+
+  /* search */
+  .search { position:relative; }
+  .search svg { position:absolute; left:14px; top:50%; transform:translateY(-50%); opacity:.5; }
+  .search input { width:100%; font:inherit; font-size:17px; padding:13px 14px 13px 42px; border-radius:12px; border:0;
+                  background:var(--surface2); color:var(--text); outline:none; }
+  .search input::placeholder { color:var(--sub); }
+
+  /* segmented */
+  .seg { display:flex; background:var(--surface2); border-radius:11px; padding:3px; margin-top:12px; }
+  .seg button { flex:1; font:inherit; font-size:14px; font-weight:600; padding:8px 4px; border:0; border-radius:8px;
+                background:transparent; color:var(--sub); transition:background .15s, color .15s; }
+  .seg button.on { background:#2C2C30; color:var(--text); box-shadow:0 1px 3px rgba(0,0,0,.35); }
+  .filters { display:flex; gap:18px; margin:16px 2px 6px; }
+  .filters button { font:inherit; font-size:14px; font-weight:600; background:none; border:0; padding:4px 0; color:var(--faint); }
+  .filters button.on { color:var(--text); }
+  .filters button small { font-weight:500; color:var(--faint); margin-left:3px; font-variant-numeric:tabular-nums; }
+
+  /* list */
+  .list { margin-top:6px; background:var(--surface); border:1px solid var(--hair); border-radius:var(--r); overflow:hidden; }
+  .row { display:flex; align-items:center; gap:12px; padding:12px 14px; border-top:1px solid var(--hair); cursor:pointer; }
+  .row:first-child { border-top:0; }
+  .row:active { background:var(--surface2); }
+  .av { width:38px; height:38px; flex:none; border-radius:50%; background:#26262A; display:flex; align-items:center; justify-content:center;
+        font-size:14px; font-weight:600; color:#C7C7CC; }
+  .info { flex:1; min-width:0; }
+  .name { font-size:16px; font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .meta { font-size:13px; color:var(--sub); margin-top:2px; }
+  .check { width:26px; height:26px; flex:none; border-radius:50%; border:1.5px solid #3A3A3F; display:flex; align-items:center; justify-content:center; }
+  .row.in .check { background:var(--ok); border-color:var(--ok); }
+  .row.in .name { color:var(--sub); }
+  .empty { padding:36px 16px; text-align:center; color:var(--sub); font-size:15px; }
+
+  /* sheet */
+  .scrim { position:fixed; inset:0; background:rgba(0,0,0,.55); backdrop-filter:blur(2px); display:none; align-items:flex-end; z-index:5; }
+  .scrim.on { display:flex; }
+  .sheet { width:100%; max-width:560px; margin:0 auto; background:#1A1A1D; border-radius:22px 22px 0 0; padding:10px 20px 30px;
+           animation:up .22s ease; }
+  @keyframes up { from { transform:translateY(30px); opacity:.6; } to { transform:none; opacity:1; } }
+  .grip { width:38px; height:5px; border-radius:3px; background:#3A3A3F; margin:0 auto 18px; }
+  .sh-top { display:flex; align-items:center; gap:14px; margin-bottom:18px; }
+  .sh-top .av { width:54px; height:54px; font-size:19px; }
+  .sh-name { font-size:21px; font-weight:700; letter-spacing:-.01em; }
+  .sh-sub { font-size:14px; color:var(--sub); margin-top:3px; }
+  .price { display:flex; align-items:baseline; justify-content:space-between; background:var(--surface2); border-radius:14px;
+           padding:16px 18px; margin-bottom:14px; }
+  .price span { color:var(--sub); font-size:15px; }
+  .price b { font-size:28px; font-weight:700; letter-spacing:-.02em; }
+  .btn { width:100%; font:inherit; font-size:17px; font-weight:600; padding:16px; border-radius:14px; border:0; }
+  .btn.primary { background:var(--text); color:#0B0B0C; }
+  .btn.text { background:transparent; color:var(--sub); margin-top:6px; }
+  .btn.danger { background:rgba(255,69,58,.12); color:var(--warn); }
+
+  /* pin */
+  .pin { max-width:320px; margin:24vh auto 0; padding:0 20px; text-align:center; }
+  .pin .brand { display:block; margin-bottom:6px; }
+  .pin p { color:var(--sub); font-size:14px; margin:0 0 22px; }
+  .pin input { width:100%; text-align:center; font:inherit; font-size:26px; letter-spacing:.4em; padding:14px; border-radius:14px; border:0;
+               background:var(--surface2); color:var(--text); outline:none; margin-bottom:12px; }
+  .err { color:var(--warn); min-height:20px; margin-top:12px; font-size:14px; }
+
+  .toast { position:fixed; top:16px; left:50%; transform:translate(-50%,-80px); background:#2C2C30; color:var(--text); font-size:15px; font-weight:600;
+           padding:10px 16px 10px 12px; border-radius:999px; display:flex; white-space:nowrap; max-width:92vw; align-items:center; gap:8px; transition:transform .25s ease; z-index:9;
+           box-shadow:0 8px 24px rgba(0,0,0,.4); }
+  .toast.on { transform:translate(-50%,0); }
+  .toast .tk { width:20px; height:20px; border-radius:50%; background:var(--ok); display:flex; align-items:center; justify-content:center; }
+
+  /* liquid glass */
+  body::before { content:""; position:fixed; inset:-20%; z-index:-1; pointer-events:none;
+    background:
+      radial-gradient(40% 30% at 15% 10%, rgba(120,140,255,.22), transparent 70%),
+      radial-gradient(35% 28% at 90% 25%, rgba(255,120,160,.16), transparent 70%),
+      radial-gradient(45% 35% at 50% 95%, rgba(80,200,190,.14), transparent 70%), var(--bg);
+    filter:blur(10px); }
+  .glass, .stat, .list, .seg, .search input, .sheet, .toast, .pin input {
+    background:linear-gradient(180deg, rgba(255,255,255,.10), rgba(255,255,255,.04)) !important;
+    -webkit-backdrop-filter:blur(28px) saturate(170%); backdrop-filter:blur(28px) saturate(170%);
+    border:1px solid rgba(255,255,255,.12) !important;
+    box-shadow:inset 0 1px 0 rgba(255,255,255,.18), inset 0 -1px 0 rgba(255,255,255,.04), 0 10px 30px rgba(0,0,0,.35); }
+  .seg button.on { background:rgba(255,255,255,.16) !important; box-shadow:inset 0 1px 0 rgba(255,255,255,.25), 0 2px 8px rgba(0,0,0,.3); }
+  .row { border-top-color:rgba(255,255,255,.07) !important; }
+  .row:active { background:rgba(255,255,255,.06) !important; }
+  .av { background:rgba(255,255,255,.10) !important; box-shadow:inset 0 1px 0 rgba(255,255,255,.15); }
+  .price { background:rgba(255,255,255,.07) !important; border:1px solid rgba(255,255,255,.08); }
+  .sheet { background:linear-gradient(180deg, rgba(40,40,46,.72), rgba(24,24,28,.78)) !important; border-radius:28px 28px 0 0; }
+  .scrim { background:rgba(0,0,0,.35) !important; backdrop-filter:blur(6px); -webkit-backdrop-filter:blur(6px); }
+  .btn.primary { background:linear-gradient(180deg,#FFFFFF,#E6E6EA) !important; box-shadow:inset 0 1px 0 #fff, 0 6px 18px rgba(0,0,0,.35); }
+  .bar { background:rgba(255,255,255,.10) !important; }
+</style>
+</head>
+<body>
+<div id="pinView" class="pin">
+  <span class="brand">OFFSCRIPT</span>
+  <p>Gästeliste</p>
+  <input id="pinIn" type="password" inputmode="numeric" maxlength="8" placeholder="PIN" autocomplete="off">
+  <button class="btn primary" onclick="login()">Weiter</button>
+  <div id="pinErr" class="err"></div>
+</div>
+
+<div id="app" class="wrap" style="display:none">
+  <div class="head">
+    <div class="brand">OFFSCRIPT<em>Gästeliste</em></div>
+    <div class="live" id="live"><span class="dot"></span><span id="sync">live</span></div>
+  </div>
+
+  <div class="stats">
+    <div class="stat"><div class="lbl">Friendslist</div><div class="num" id="nList">0<span>/0</span></div><div class="bar"><i id="bList"></i></div></div>
+    <div class="stat"><div class="lbl">Gästeliste</div><div class="num" id="nGuest">0<span>/0</span></div><div class="bar"><i id="bGuest"></i></div></div>
+  </div>
+
+  <div class="search">
+    <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#F5F5F7" stroke-width="2.2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+    <input id="q" type="search" placeholder="Name suchen" autocomplete="off" oninput="render()">
+  </div>
+
+  <div class="seg" id="seg">
+    <button data-t="all" class="on">Alle</button>
+    <button data-t="LIST">Friendslist</button>
+    <button data-t="GUEST">Gästeliste</button>
+  </div>
+
+  <div class="filters" id="filters">
+    <button data-f="open" class="on">Offen<small id="cOpen"></small></button>
+    <button data-f="in">Drin<small id="cIn"></small></button>
+    <button data-f="all">Alle<small id="cAll"></small></button>
+  </div>
+
+  <div id="list" class="list"></div>
+</div>
+
+<div id="scrim" class="scrim" onclick="if(event.target===this)closeSheet()"><div class="sheet" id="sheet"></div></div>
+<div id="toast" class="toast"><span class="tk"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#0B0B0C" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span><span id="toastT"></span></div>
+
+<script>
+const PRICE_LIST = 5;
+const CHECK = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#0B0B0C" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>';
+let PIN = '', state = { people: [], checks: {} }, tab = 'open', type = 'all', busy = false;
+
+const EXEC_URL = '{{EXEC_URL}}';
+async function api(fn, ...args) {
+  const r = await fetch(EXEC_URL, { method: 'POST', redirect: 'follow',
+    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+    body: JSON.stringify({ fn: fn, pin: PIN, args: args }) });
+  const j = await r.json();
+  if (!j.ok) throw new Error(j.error || 'Fehler');
+  return j.data;
+}
+function norm(s) { return String(s).toLowerCase().replace(/ı/g, 'i').replace(/ß/g, 'ss').replace(/[øœ]/g, 'o').replace(/æ/g, 'ae').normalize('NFD').replace(/[̀-ͯ]/g, ''); }
+function esc(s) { return String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c])); }
+function initials(n) { const p = String(n).trim().split(/\s+/); return ((p[0] || '')[0] || '').toUpperCase() + ((p.length > 1 ? p[p.length - 1][0] : '') || '').toUpperCase(); }
+function toast(t, ok = true) {
+  const el = document.getElementById('toast'); document.getElementById('toastT').textContent = t;
+  el.querySelector('.tk').style.display = ok ? 'flex' : 'none';
+  el.classList.add('on'); clearTimeout(el._t); el._t = setTimeout(() => el.classList.remove('on'), 1700);
+}
+
+async function login() {
+  PIN = document.getElementById('pinIn').value.trim();
+  if (!PIN) return;
+  try {
+    state = await api('getState');
+    try { sessionStorage.setItem('osPin', PIN); } catch (e) {}
+    document.getElementById('pinView').style.display = 'none';
+    document.getElementById('app').style.display = 'block';
+    render(); stamp(true); setInterval(refresh, 8000);
+  } catch (e) { document.getElementById('pinErr').textContent = 'PIN stimmt nicht'; }
+}
+async function refresh() {
+  if (busy) return;
+  try { state = await api('getState'); render(); stamp(true); } catch (e) { stamp(false); }
+}
+function stamp(ok) {
+  document.getElementById('live').classList.toggle('off', !ok);
+  document.getElementById('sync').textContent = ok ? 'live · ' + new Date().toTimeString().slice(0, 5) : 'offline';
+}
+
+function render() {
+  const c = state.checks;
+  const fr = state.people.filter(p => p.type === 'LIST'), gu = state.people.filter(p => p.type === 'GUEST');
+  const frIn = fr.filter(p => c[p.id]).length, guIn = gu.filter(p => c[p.id]).length;
+  document.getElementById('nList').innerHTML = frIn + '<span>/' + fr.length + '</span>';
+  document.getElementById('nGuest').innerHTML = guIn + '<span>/' + gu.length + '</span>';
+  document.getElementById('bList').style.width = (fr.length ? frIn / fr.length * 100 : 0) + '%';
+  document.getElementById('bGuest').style.width = (gu.length ? guIn / gu.length * 100 : 0) + '%';
+
+  const q = norm(document.getElementById('q').value.trim());
+  let base = state.people.map(p => Object.assign({}, p, { chk: c[p.id] }));
+  if (type !== 'all') base = base.filter(r => r.type === type);
+  if (q) base = base.filter(r => norm(r.name).indexOf(q) > -1);
+  document.getElementById('cOpen').textContent = base.filter(r => !r.chk).length;
+  document.getElementById('cIn').textContent = base.filter(r => r.chk).length;
+  document.getElementById('cAll').textContent = base.length;
+
+  let rows = base;
+  if (tab === 'open') rows = rows.filter(r => !r.chk);
+  if (tab === 'in') rows = rows.filter(r => r.chk);
+  rows.sort((a, b) => a.name.localeCompare(b.name, 'de'));
+  const sub = r => (r.type === 'LIST' ? 'Friendslist · 5 €' : 'Gästeliste · Gratis') + (r.chk ? ' · ' + r.chk.time : '');
+  document.getElementById('list').innerHTML = rows.length ? rows.map(r =>
+    '<div class="row ' + (r.chk ? 'in' : '') + '" onclick="tap(\'' + r.id + '\')">' +
+      '<div class="av">' + esc(initials(r.name)) + '</div>' +
+      '<div class="info"><div class="name">' + esc(r.name) + '</div><div class="meta">' + sub(r) + '</div></div>' +
+      '<div class="check">' + (r.chk ? CHECK : '') + '</div></div>'
+  ).join('') : '<div class="empty">' + (q ? 'Niemand gefunden' : tab === 'in' ? 'Noch niemand eingecheckt' : 'Alle sind drin') + '</div>';
+  document.getElementById('list').style.display = 'block';
+}
+
+document.getElementById('seg').addEventListener('click', e => {
+  const b = e.target.closest('button'); if (!b) return;
+  document.querySelectorAll('#seg button').forEach(x => x.classList.remove('on')); b.classList.add('on'); type = b.dataset.t; render();
+});
+document.getElementById('filters').addEventListener('click', e => {
+  const b = e.target.closest('button'); if (!b) return;
+  document.querySelectorAll('#filters button').forEach(x => x.classList.remove('on')); b.classList.add('on'); tab = b.dataset.f; render();
+});
+
+function find(id) { return state.people.find(p => p.id === id); }
+function openSheet(html) { document.getElementById('sheet').innerHTML = '<div class="grip"></div>' + html; document.getElementById('scrim').classList.add('on'); }
+function closeSheet() { document.getElementById('scrim').classList.remove('on'); }
+
+function tap(id) {
+  const p = find(id), chk = state.checks[id];
+  if (!p) return;
+  const isList = p.type === 'LIST';
+  const top = '<div class="sh-top"><div class="av">' + esc(initials(p.name)) + '</div><div><div class="sh-name">' + esc(p.name) +
+              '</div><div class="sh-sub">' + (isList ? 'Friendslist' : 'Gästeliste') + '</div></div></div>';
+  if (chk) {
+    openSheet(top + '<div class="price"><span>Eingecheckt</span><b>' + chk.time + '</b></div>' +
+      '<button class="btn danger" onclick="doUndo(\'' + id + '\')">Check-in rückgängig</button>' +
+      '<button class="btn text" onclick="closeSheet()">Schließen</button>');
+  } else {
+    openSheet(top + '<div class="price"><span>Eintritt</span><b>' + (isList ? PRICE_LIST + ' €' : 'Gratis') + '</b></div>' +
+      '<button class="btn primary" onclick="doIn(\'' + id + '\')">Einchecken</button>' +
+      '<button class="btn text" onclick="closeSheet()">Abbrechen</button>');
+  }
+}
+
+async function run(fn, args, ok) {
+  if (busy) return; busy = true; closeSheet();
+  try {
+    const r = await api(fn, ...args);
+    if (r && r.ok === false) toast(r.msg || 'Nicht möglich', false); else toast(ok);
+    state = await api('getState'); render(); stamp(true);
+  } catch (e) { toast('Verbindung fehlgeschlagen', false); stamp(false); }
+  busy = false;
+}
+function doIn(id) { const p = find(id); document.getElementById('q').value = ''; run('checkIn', [id, p.name, p.type, ''], p.name + ' ist drin'); }
+function doUndo(id) { run('undo', [id], 'Rückgängig gemacht'); }
+
+try { const saved = sessionStorage.getItem('osPin'); if (saved) { document.getElementById('pinIn').value = saved; login(); } } catch (e) {}
+document.getElementById('pinIn').addEventListener('keydown', e => { if (e.key === 'Enter') login(); });
+</script>
+</body>
+</html>

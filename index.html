@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>OFFSCRIPT · Hip-Hop / RnB · Munich</title>
+<meta name="description" content="OFFSCRIPT. Hip-Hop / RnB. Fri 23 Oct, 22:00 till late, Lewis Bar & Club, Munich.">
+<meta name="theme-color" content="#0E0E0E">
+<meta property="og:title" content="OFFSCRIPT · FRI 23 OCT">
+<meta property="og:description" content="Hip-Hop / RnB. 22:00 till late. Lewis Bar & Club, Munich.">
+<meta property="og:image" content="https://offscript-event.github.io/assets/og.jpg">
+<meta property="og:url" content="https://offscript-event.github.io/">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="assets/favicon.png">
+<link rel="apple-touch-icon" href="assets/icon-180.png">
+<link rel="preload" href="assets/archivo-black.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="assets/site.css">
+</head>
+<body>
+
+<header class="hero" id="hero">
+  <picture>
+    <source media="(min-aspect-ratio: 1/1)" srcset="assets/crowd-wide.jpg">
+    <img src="assets/crowd.jpg" alt="">
+  </picture>
+  <div class="grid"></div>
+  <div class="hero-in">
+    <img class="logo" src="assets/logo.svg" alt="OFFSCRIPT">
+    <p class="date x">Fri 23 Oct · 22:00 till late</p>
+    <div class="cd" id="cd" aria-live="off">
+      <div><b class="x red" id="dd">00</b><span>DAYS</span></div>
+      <div><b class="x red" id="hh">00</b><span>HRS</span></div>
+      <div><b class="x red" id="mm">00</b><span>MIN</span></div>
+      <div><b class="x red" id="ss">00</b><span>SEC</span></div>
+    </div>
+    <p class="state tonight x red">Tonight</p>
+    <p class="state thanks x red">Thank you</p>
+    <p class="venue x">Lewis Bar &amp; Club · Munich</p>
+  </div>
+</header>
+
+<section class="lineup">
+  <div class="wrap">
+    <h2 class="h2 x">Line-up</h2>
+    <div class="collage">
+      <a class="cut c808" href="https://www.instagram.com/offscript_event/" target="_blank" rel="noopener" aria-label="808.RIN"><img src="assets/dj-808rin.webp" alt="808.RIN" loading="lazy"></a>
+      <a class="stamp s808 x" href="https://www.instagram.com/offscript_event/" target="_blank" rel="noopener">808.RIN</a>
+      <a class="cut ccc" href="https://www.instagram.com/offscript_event/" target="_blank" rel="noopener" aria-label="DJ CC"><img src="assets/dj-djcc.webp" alt="DJ CC" loading="lazy"></a>
+      <a class="stamp scc x" href="https://www.instagram.com/offscript_event/" target="_blank" rel="noopener">DJ CC</a>
+    </div>
+  </div>
+</section>
+
+<section class="loc">
+  <div class="grid"></div>
+  <div class="wrap" style="position:relative">
+    <h2 class="h2 x">Location</h2>
+    <p class="big x">Lewis<br>Bar &amp; Club</p>
+    <p class="addr x red">Rumfordstr. 2<br>80469 Munich</p>
+    <a class="btn" href="https://www.google.com/maps/search/?api=1&amp;query=Lewis+Bar+%26+Club+Rumfordstra%C3%9Fe+2+80469+M%C3%BCnchen" target="_blank" rel="noopener">Route <span aria-hidden="true">→</span></a>
+  </div>
+</section>
+
+<a class="archive" href="archive/"><span class="x">Archive</span><span class="arrow" aria-hidden="true">→</span></a>
+
+<footer>
+  <a href="https://www.instagram.com/offscript_event/" target="_blank" rel="noopener">@offscript_event</a>
+  <a href="impressum/">Impressum</a>
+</footer>
+
+<script>
+(function () {
+  var START = new Date('2026-10-23T22:00:00+02:00').getTime();
+  var END = new Date('2026-10-24T06:00:00+02:00').getTime();
+  var hero = document.getElementById('hero');
+  var el = { d: document.getElementById('dd'), h: document.getElementById('hh'), m: document.getElementById('mm'), s: document.getElementById('ss') };
+  function pad(n) { return (n < 10 ? '0' : '') + n; }
+  function tick() {
+    var now = Date.now();
+    if (now >= END) { hero.className = 'hero over'; return; }
+    if (now >= START) { hero.className = 'hero live'; setTimeout(tick, 30000); return; }
+    var t = Math.floor((START - now) / 1000);
+    el.d.textContent = pad(Math.floor(t / 86400));
+    el.h.textContent = pad(Math.floor(t % 86400 / 3600));
+    el.m.textContent = pad(Math.floor(t % 3600 / 60));
+    el.s.textContent = pad(t % 60);
+    setTimeout(tick, 1000 - (now % 1000));
+  }
+  tick();
+})();
+</script>
+</body>
+</html>
