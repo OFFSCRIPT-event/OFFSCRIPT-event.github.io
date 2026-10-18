@@ -31,9 +31,17 @@ body::after {
 .x {
   font-family: "Archivo X", "Arial Black", sans-serif; font-weight: 900; letter-spacing: .01em;
   text-transform: uppercase; line-height: .92;
-  -webkit-mask-image: url("speckle.png"); mask-image: url("speckle.png");
-  -webkit-mask-size: 240px; mask-size: 240px;
+  /* organic print wear; scales with the type, so small text gets small chips */
+  -webkit-mask-image: url("wear.png"); mask-image: url("wear.png");
+  -webkit-mask-size: 9em; mask-size: 9em;
 }
+/* small type stays clean and readable */
+.h2, .date, .venue, .addr, .sub .line { -webkit-mask-image: none; mask-image: none; }
+/* every countdown digit gets its own patch of wear */
+.cd div:nth-child(2) b { -webkit-mask-position: 3.1em 1.7em; mask-position: 3.1em 1.7em; }
+.cd div:nth-child(3) b { -webkit-mask-position: 5.4em 4.2em; mask-position: 5.4em 4.2em; }
+.cd div:nth-child(4) b { -webkit-mask-position: 1.3em 6.6em; mask-position: 1.3em 6.6em; }
+.stamp.scc { -webkit-mask-position: 4.4em 2.9em; mask-position: 4.4em 2.9em; }
 .red { color: var(--red); }
 
 /* red grid */
@@ -126,4 +134,4 @@ footer a { opacity: .8; } footer a:hover { opacity: 1; color: var(--red); }
 .legal { max-width: 720px; line-height: 1.6; font-size: 15px; }
 .legal h1 { font-size: clamp(40px, 11vw, 80px); margin-bottom: 36px; }
 .legal h2 { font-family: "Archivo X"; font-size: 15px; letter-spacing: .14em; text-transform: uppercase; margin: 34px 0 10px; color: var(--red); }
-.legal p { opacity: .88; } .legal a { text-decoration: underline; }
+.legal p { opacity: .88; } .legal p + p { margin-top: 12px; } .legal a { text-decoration: underline; }
