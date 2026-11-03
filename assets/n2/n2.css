@@ -50,7 +50,8 @@ section { max-width: 760px; margin: 0 auto; padding: clamp(56px, 11vw, 100px) 0;
 .ladder .status { font-size: 12px; margin-top: 6px; opacity: .85; }
 .ladder li.live { background: var(--yel); color: var(--ink); border-bottom-color: transparent; border-radius: 4px; }
 .ladder li.sold { color: rgba(207, 198, 245, .5); }
-.ladder li.sold .name, .ladder li.sold .price { text-decoration: line-through; text-decoration-color: var(--yel); text-decoration-thickness: 4px; }
+.ladder li { position: relative; }
+.ladder li.sold::after { content: ""; position: absolute; left: 6px; right: 6px; top: 50%; height: 7px; margin-top: -3px; background: var(--yel); border-radius: 2px; }
 .note { text-align: center; margin: 22px 0 26px; font-size: 13px; }
 .tickets { text-align: center; }
 .tickets .ladder { text-align: left; }
