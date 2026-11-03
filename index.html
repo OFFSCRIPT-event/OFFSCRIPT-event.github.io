@@ -3,90 +3,87 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>OFFSCRIPT · Hip-Hop / RnB · Munich</title>
-<meta name="description" content="OFFSCRIPT. Hip-Hop / RnB. Fri 23 Oct, 22:00 till late, Lewis Bar & Club, Munich.">
-<meta name="theme-color" content="#0E0E0E">
-<meta property="og:title" content="OFFSCRIPT · FRI 23 OCT">
-<meta property="og:description" content="Hip-Hop / RnB. 22:00 till late. Lewis Bar & Club, Munich.">
-<meta property="og:image" content="https://offscript-event.github.io/assets/og.jpg">
+<title>OFFSCRIPT · Hip-Hop · Munich</title>
+<meta name="description" content="OFFSCRIPT. Hip-hop all night, heavy on trap. 22:00 till late, Lewis Bar & Club, Munich.">
+<meta name="theme-color" content="#221F7A">
+<meta property="og:title" content="OFFSCRIPT · Night 2">
+<meta property="og:description" content="Hip-hop all night. Heavy on trap. Lewis Bar & Club, Munich.">
+<meta property="og:image" content="https://offscript-event.github.io/assets/n2/og.jpg">
 <meta property="og:url" content="https://offscript-event.github.io/">
 <meta name="twitter:card" content="summary_large_image">
 <link rel="icon" href="assets/favicon.png">
 <link rel="apple-touch-icon" href="assets/icon-180.png">
-<link rel="preload" href="assets/archivo-black.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="assets/site.css">
+<link rel="preload" href="assets/n2/anton.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="assets/n2/n2.css">
 </head>
 <body>
 
-<header class="hero" id="hero">
+<header class="hero">
   <picture>
-    <source media="(min-aspect-ratio: 1/1)" srcset="assets/crowd-wide.jpg">
-    <img src="assets/crowd.jpg" alt="">
+    <source media="(min-aspect-ratio: 1/1)" srcset="assets/n2/sky-wide.webp">
+    <img src="assets/n2/sky-portrait.webp" alt="">
   </picture>
-  <div class="grid"></div>
   <div class="hero-in">
-    <img class="logo" src="assets/logo.svg" alt="OFFSCRIPT">
-    <p class="date x">Fri 23 Oct · 22:00 till late</p>
-    <div class="cd" id="cd" aria-live="off">
-      <div><b class="x red" id="dd">00</b><span>DAYS</span></div>
-      <div><b class="x red" id="hh">00</b><span>HRS</span></div>
-      <div><b class="x red" id="mm">00</b><span>MIN</span></div>
-      <div><b class="x red" id="ss">00</b><span>SEC</span></div>
-    </div>
-    <p class="state tonight x red">Tonight</p>
-    <p class="state thanks x red">Thank you</p>
-    <p class="venue x">Lewis Bar &amp; Club · Munich</p>
+    <p class="meta mono" id="date">DATE TBA · 22:00 TILL LATE</p>
+    <img class="logo" src="assets/n2/logo-yellow.png" alt="OFFSCRIPT">
+    <p class="claim">Hip-hop all night.<br>Heavy on trap.</p>
+    <p class="meta mono">Lewis Bar &amp; Club · Munich</p>
+    <a class="btn" id="ticket-btn" href="#tickets">Tickets</a>
   </div>
 </header>
 
-<section class="lineup">
-  <div class="wrap">
-    <h2 class="h2 x">Line-up</h2>
-    <div class="collage">
-      <a class="cut c808" href="https://www.instagram.com/offscript_event/" target="_blank" rel="noopener" aria-label="808.RIN"><img src="assets/dj-808rin.webp" alt="808.RIN" loading="lazy"></a>
-      <a class="stamp s808 x" href="https://www.instagram.com/offscript_event/" target="_blank" rel="noopener">808.RIN</a>
-      <a class="cut ccc" href="https://www.instagram.com/offscript_event/" target="_blank" rel="noopener" aria-label="DJ CC"><img src="assets/dj-djcc.webp" alt="DJ CC" loading="lazy"></a>
-      <a class="stamp scc x" href="https://www.instagram.com/offscript_event/" target="_blank" rel="noopener">DJ CC</a>
-    </div>
-  </div>
-</section>
+<main>
+  <section id="tickets" class="tickets" data-live="0">
+    <h2 class="label mono">T I C K E T S</h2>
+    <ol class="ladder">
+      <li><span class="name">Super Early Bird</span><span class="price">5 €</span><span class="status mono"></span></li>
+      <li><span class="name">Early Bird</span><span class="price">8 €</span><span class="status mono"></span></li>
+      <li><span class="name">Regular</span><span class="price">10 €</span><span class="status mono"></span></li>
+      <li><span class="name">Last Minute</span><span class="price">12 €</span><span class="status mono"></span></li>
+    </ol>
+    <p class="note mono">Door 12 € · only if there's room</p>
+    <a class="btn" id="ticket-btn-2" href="#tickets">Get tickets</a>
+  </section>
 
-<section class="loc">
-  <div class="grid"></div>
-  <div class="wrap" style="position:relative">
-    <h2 class="h2 x">Location</h2>
-    <p class="big x">Lewis<br>Bar &amp; Club</p>
-    <p class="addr x red">Rumfordstr. 2<br>80469 Munich</p>
-    <a class="btn" href="https://www.google.com/maps/search/?api=1&amp;query=Lewis+Bar+%26+Club+Rumfordstra%C3%9Fe+2+80469+M%C3%BCnchen" target="_blank" rel="noopener">Route <span aria-hidden="true">→</span></a>
-  </div>
-</section>
+  <section class="sounds">
+    <h2 class="label mono">S O U N D S &nbsp; O F</h2>
+    <p class="artists"><span>Drake</span><span>Future</span><span>Migos</span><span>Travis Scott</span><span>21 Savage</span><span>Young Thug</span><span>Playboi Carti</span><span>Lil Uzi Vert</span></p>
+  </section>
 
-<a class="archive" href="archive/"><span class="x">Archive</span><span class="arrow" aria-hidden="true">→</span></a>
+  <section class="loc">
+    <h2 class="label mono">L O C A T I O N</h2>
+    <p class="big">Lewis<br>Bar &amp; Club</p>
+    <p class="addr mono">Rumfordstr. 2<br>80469 Munich</p>
+    <a class="btn ghost" href="https://www.google.com/maps/search/?api=1&amp;query=Lewis+Bar+%26+Club+Rumfordstra%C3%9Fe+2+80469+M%C3%BCnchen" target="_blank" rel="noopener">Route →</a>
+  </section>
 
-<footer>
+  <a class="archive" href="archive/"><span>Archive</span><span aria-hidden="true">→</span></a>
+</main>
+
+<footer class="mono">
   <a href="https://www.instagram.com/offscript_event/" target="_blank" rel="noopener">@offscript_event</a>
   <a href="impressum/">Impressum</a>
 </footer>
 
 <script>
+/* ---- edit here when the shop is live ----
+   SHOP: pretix link, LIVE: 0 = Super Early Bird live, 1 = Early, 2 = Regular, 3 = Last Minute
+   DATE: shown in the hero, e.g. "FRI 04 DEC · 22:00 TILL LATE" */
 (function () {
-  var START = new Date('2026-10-23T22:00:00+02:00').getTime();
-  var END = new Date('2026-10-24T06:00:00+02:00').getTime();
-  var hero = document.getElementById('hero');
-  var el = { d: document.getElementById('dd'), h: document.getElementById('hh'), m: document.getElementById('mm'), s: document.getElementById('ss') };
-  function pad(n) { return (n < 10 ? '0' : '') + n; }
-  function tick() {
-    var now = Date.now();
-    if (now >= END) { hero.className = 'hero over'; return; }
-    if (now >= START) { hero.className = 'hero live'; setTimeout(tick, 30000); return; }
-    var t = Math.floor((START - now) / 1000);
-    el.d.textContent = pad(Math.floor(t / 86400));
-    el.h.textContent = pad(Math.floor(t % 86400 / 3600));
-    el.m.textContent = pad(Math.floor(t % 3600 / 60));
-    el.s.textContent = pad(t % 60);
-    setTimeout(tick, 1000 - (now % 1000));
-  }
-  tick();
+  var SHOP = "";
+  var LIVE = 0;
+  var DATE = "";
+  if (DATE) document.getElementById("date").textContent = DATE;
+  if (SHOP) ["ticket-btn", "ticket-btn-2"].forEach(function (id) {
+    var a = document.getElementById(id); a.href = SHOP; a.target = "_blank"; a.rel = "noopener";
+  });
+  var rows = document.querySelectorAll(".ladder li");
+  rows.forEach(function (li, i) {
+    var st = li.querySelector(".status");
+    if (i < LIVE) { li.className = "sold"; st.textContent = "Sold out"; }
+    else if (i === LIVE) { li.className = "live"; st.textContent = SHOP ? "On sale now" : "Soon"; }
+    else { li.className = "next"; st.textContent = "Next"; }
+  });
 })();
 </script>
 </body>
