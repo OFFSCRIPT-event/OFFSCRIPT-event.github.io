@@ -36,12 +36,12 @@
   <section id="tickets" class="tickets" data-live="0">
     <h2 class="label mono">T I C K E T S</h2>
     <ol class="ladder">
-      <li><span class="name">Super Early Bird</span><span class="price">5 €</span><span class="status mono"></span></li>
-      <li><span class="name">Early Bird</span><span class="price">8 €</span><span class="status mono"></span></li>
-      <li><span class="name">Regular</span><span class="price">10 €</span><span class="status mono"></span></li>
-      <li><span class="name">Last Minute</span><span class="price">12 €</span><span class="status mono"></span></li>
+      <li><span class="name">Super Early Bird</span><span class="status mono"></span></li>
+      <li><span class="name">Early Bird</span><span class="status mono"></span></li>
+      <li><span class="name">Regular</span><span class="status mono"></span></li>
+      <li><span class="name">Last Minute</span><span class="status mono"></span></li>
     </ol>
-    <p class="note mono">Door 12 € · only if there's room</p>
+    <p class="note mono">Door only if there's room</p>
     <a class="btn" id="ticket-btn-2" href="#tickets">Get tickets</a>
   </section>
 
@@ -82,7 +82,7 @@
     var st = li.querySelector(".status");
     if (i < LIVE) { li.className = "sold"; st.textContent = "Sold out"; }
     else if (i === LIVE) { li.className = "live"; st.textContent = SHOP ? "On sale now" : "Soon"; }
-    else { li.className = "next"; st.textContent = "Next"; }
+    else { li.className = "next"; st.textContent = "Coming soon"; }
   });
 })();
 </script>
