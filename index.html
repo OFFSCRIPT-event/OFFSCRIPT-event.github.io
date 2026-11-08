@@ -39,9 +39,8 @@
       <li><span class="name">Super Early Bird</span><span class="status mono"></span></li>
       <li><span class="name">Early Bird</span><span class="status mono"></span></li>
       <li><span class="name">Regular</span><span class="status mono"></span></li>
-      <li><span class="name">Last Minute</span><span class="status mono"></span></li>
     </ol>
-    <p class="note mono">Door only if there's room</p>
+    <p class="note mono" id="ticket-note">Door only if there's room</p>
     <a class="btn" id="ticket-btn-2" href="#tickets">Get tickets</a>
   </section>
 
@@ -67,7 +66,7 @@
 
 <script>
 /* ---- edit here when the shop is live ----
-   SHOP: pretix link, LIVE: 0 = Super Early Bird live, 1 = Early, 2 = Regular, 3 = Last Minute
+   SHOP: Eventbrite link, LIVE: 0 = Super Early Bird live, 1 = Early Bird, 2 = Regular, 3 = online sold out
    DATE: shown in the hero, e.g. "FRI 04 DEC · 22:00 TILL LATE" */
 (function () {
   var SHOP = "";
@@ -84,6 +83,7 @@
     else if (i === LIVE) { li.className = "live"; st.textContent = SHOP ? "On sale now" : "Soon"; }
     else { li.className = "next"; st.textContent = "Coming soon"; }
   });
+  if (LIVE >= rows.length) document.getElementById("ticket-note").textContent = "Online sold out · door only if there's room";
 })();
 </script>
 </body>
