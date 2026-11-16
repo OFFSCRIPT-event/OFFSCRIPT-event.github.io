@@ -237,7 +237,7 @@ function render() {
   if (tab === 'open') rows = rows.filter(r => !r.chk);
   if (tab === 'in') rows = rows.filter(r => r.chk);
   rows.sort((a, b) => a.name.localeCompare(b.name, 'de'));
-  const sub = r => (r.type === 'LIST' ? 'Friendslist · 5 €' : 'Gästeliste · Gratis') + (r.chk ? ' · ' + r.chk.time : '');
+  const sub = r => (r.type === 'LIST' ? 'Friendslist · ' + (state.freeNow ? 'frei bis ' + state.freeUntil : PRICE_LIST + ' €') : 'Gästeliste · Gratis') + (r.chk ? ' · ' + r.chk.time : '');
   document.getElementById('list').innerHTML = rows.length ? rows.map(r =>
     '<div class="row ' + (r.chk ? 'in' : '') + '" onclick="tap(\'' + r.id + '\')">' +
       '<div class="av">' + esc(initials(r.name)) + '</div>' +
@@ -271,7 +271,7 @@ function tap(id) {
       '<button class="btn danger" onclick="doUndo(\'' + id + '\')">Check-in rückgängig</button>' +
       '<button class="btn text" onclick="closeSheet()">Schließen</button>');
   } else {
-    openSheet(top + '<div class="price"><span>Eintritt</span><b>' + (isList ? PRICE_LIST + ' €' : 'Gratis') + '</b></div>' +
+    openSheet(top + '<div class="price"><span>' + (state.freeNow ? 'Eintritt bis ' + state.freeUntil : 'Eintritt') + '</span><b>' + (state.freeNow ? 'Frei' : isList ? PRICE_LIST + ' €' : 'Gratis') + '</b></div>' +
       '<button class="btn primary" onclick="doIn(\'' + id + '\')">Einchecken</button>' +
       '<button class="btn text" onclick="closeSheet()">Abbrechen</button>');
   }
