@@ -72,3 +72,12 @@ footer { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 16
   padding: 40px var(--pad) calc(40px + env(safe-area-inset-bottom)); font-size: 13px; }
 footer a:hover { color: var(--yel); }
 @media (prefers-reduced-motion: reduce) { .btn, .archive span { transition: none; } }
+
+/* countdown (hidden while the night runs and after it) */
+.cd { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: clamp(8px, 3vw, 22px); width: min(100%, 520px); }
+.cd div { display: flex; flex-direction: column; align-items: center; gap: 6px; }
+.cd b { font-weight: 400; font-size: clamp(44px, 13vw, 84px); line-height: 1; color: var(--yel); font-variant-numeric: tabular-nums; }
+.cd span { font-size: 11px; letter-spacing: .2em; color: var(--lav); }
+.state { display: none; font-size: clamp(44px, 13vw, 84px); line-height: 1; color: var(--yel); }
+.hero.live .cd, .hero.over .cd { display: none; }
+.hero.live .state.tonight, .hero.over .state.thanks { display: block; }
