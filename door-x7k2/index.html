@@ -3,15 +3,16 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
-<title>OFFSCRIPT · Door</title>
+<title>Door</title>
 <meta name="robots" content="noindex, nofollow">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="OFFSCRIPT Door">
-<link rel="apple-touch-icon" href="../assets/icon-180.png">
-<base target="_top">
-<meta charset="utf-8">
+<meta name="apple-mobile-web-app-title" content="Door">
+<meta name="theme-color" content="#0B0B0C">
+<meta name="format-detection" content="telephone=no">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icon-180.png">
 <style>
   :root {
     --bg:#0B0B0C; --surface:#151517; --surface2:#1C1C1F; --hair:rgba(255,255,255,.07);
@@ -19,10 +20,16 @@
     --r:16px;
   }
   * { box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+  html { overscroll-behavior:none; height:100%; }
+  body { -webkit-user-select:none; user-select:none; -webkit-touch-callout:none; -webkit-text-size-adjust:100%; touch-action:manipulation; }
+  input { -webkit-user-select:text; user-select:text; }
+  button, .row { transition:transform .12s ease, background .15s, color .15s, opacity .15s; }
+  button:active { transform:scale(.97); }
+  .row:active { transform:scale(.99); }
   html,body { margin:0; background:var(--bg); color:var(--text);
     font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","Inter","Segoe UI",system-ui,sans-serif;
     -webkit-font-smoothing:antialiased; }
-  .wrap { max-width:560px; margin:0 auto; padding:18px 18px 48px; }
+  .wrap { max-width:560px; margin:0 auto; padding:calc(env(safe-area-inset-top) + 12px) 18px calc(env(safe-area-inset-bottom) + 48px); }
 
   /* header */
   .head { display:flex; align-items:center; justify-content:space-between; margin:6px 0 22px; }
@@ -75,8 +82,9 @@
 
   /* sheet */
   .scrim { position:fixed; inset:0; background:rgba(0,0,0,.55); backdrop-filter:blur(2px); display:none; align-items:flex-end; z-index:5; }
-  .scrim.on { display:flex; }
-  .sheet { width:100%; max-width:560px; margin:0 auto; background:#1A1A1D; border-radius:22px 22px 0 0; padding:10px 20px 30px;
+  .scrim.on { display:flex; animation:fade .18s ease; }
+  @keyframes fade { from { opacity:0; } to { opacity:1; } }
+  .sheet { width:100%; max-width:560px; margin:0 auto; background:#1A1A1D; border-radius:22px 22px 0 0; padding:10px 20px calc(env(safe-area-inset-bottom) + 24px);
            animation:up .22s ease; }
   @keyframes up { from { transform:translateY(30px); opacity:.6; } to { transform:none; opacity:1; } }
   .grip { width:38px; height:5px; border-radius:3px; background:#3A3A3F; margin:0 auto 18px; }
@@ -101,10 +109,12 @@
                background:var(--surface2); color:var(--text); outline:none; margin-bottom:12px; }
   .err { color:var(--warn); min-height:20px; margin-top:12px; font-size:14px; }
 
-  .toast { position:fixed; top:16px; left:50%; transform:translate(-50%,-80px); background:#2C2C30; color:var(--text); font-size:15px; font-weight:600;
+  .toast { position:fixed; top:calc(env(safe-area-inset-top) + 8px); left:50%; transform:translate(-50%,-140px); background:#2C2C30; color:var(--text); font-size:15px; font-weight:600;
            padding:10px 16px 10px 12px; border-radius:999px; display:flex; white-space:nowrap; max-width:92vw; align-items:center; gap:8px; transition:transform .25s ease; z-index:9;
            box-shadow:0 8px 24px rgba(0,0,0,.4); }
   .toast.on { transform:translate(-50%,0); }
+  .toast.bad { background:rgba(255,69,58,.9) !important; }
+  .row.pending .check { opacity:.6; }
   .toast .tk { width:20px; height:20px; border-radius:50%; background:var(--ok); display:flex; align-items:center; justify-content:center; }
 
   /* liquid glass */
@@ -135,7 +145,7 @@
   <span class="brand">OFFSCRIPT</span>
   <p>Gästeliste</p>
   <input id="pinIn" type="password" inputmode="numeric" maxlength="8" placeholder="PIN" autocomplete="off">
-  <button class="btn primary" onclick="login()">Weiter</button>
+  <button class="btn primary" onclick="login(false)">Weiter</button>
   <div id="pinErr" class="err"></div>
 </div>
 
@@ -176,7 +186,8 @@
 <script>
 const PRICE_LIST = 5;
 const CHECK = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#0B0B0C" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>';
-let PIN = '', state = { people: [], checks: {} }, tab = 'open', type = 'all', busy = false;
+let PIN = '', raw = { people: [], checks: {} }, state = raw, tab = 'open', type = 'all', timer = null, inflight = 0;
+const pending = {};   // id -> { op: 'in', chk } | { op: 'undo' }: shown at once, kept until the sheet has it
 
 const EXEC_URL = 'https://script.google.com/macros/s/AKfycbz_dntSPCmsllvpMaTiEN5rjzw713ZOeP0BsRai-b9ys2hT0u2GbxIL-XMkIE83PBKL/exec';
 async function api(fn, ...args) {
@@ -187,33 +198,78 @@ async function api(fn, ...args) {
   if (!j.ok) throw new Error(j.error || 'Fehler');
   return j.data;
 }
-function norm(s) { return String(s).toLowerCase().replace(/ı/g, 'i').replace(/ß/g, 'ss').replace(/[øœ]/g, 'o').replace(/æ/g, 'ae').normalize('NFD').replace(/[̀-ͯ]/g, ''); }
+const store = {
+  get(k) { try { return localStorage.getItem(k); } catch (e) { return null; } },
+  set(k, v) { try { localStorage.setItem(k, v); } catch (e) {} },
+  del(k) { try { localStorage.removeItem(k); } catch (e) {} }
+};
+
+// Haptic feedback. iPhone (iOS 18+): a hidden system switch gives a real tap; Android: vibration API.
+const hapEl = (() => {
+  const l = document.createElement('label'); l.setAttribute('aria-hidden', 'true');
+  l.style.cssText = 'position:fixed;left:-100px;top:0;width:1px;height:1px;opacity:0;overflow:hidden;pointer-events:none';
+  const i = document.createElement('input'); i.type = 'checkbox'; i.setAttribute('switch', ''); i.tabIndex = -1;
+  l.appendChild(i); document.body.appendChild(l); return l;
+})();
+function haptic(kind) {
+  if (navigator.vibrate) { navigator.vibrate(kind === 'error' ? [25, 70, 25] : kind === 'success' ? 18 : 8); return; }
+  hapEl.click();
+  if (kind === 'error') setTimeout(() => hapEl.click(), 120);
+}
+
+function norm(s) { return String(s).toLowerCase().replace(/ı/g, 'i').replace(/ß/g, 'ss').replace(/[øœ]/g, 'o').replace(/æ/g, 'ae').normalize('NFD').replace(/[\u0300-\u036f]/g, ''); }
 function esc(s) { return String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c])); }
 function initials(n) { const p = String(n).trim().split(/\s+/); return ((p[0] || '')[0] || '').toUpperCase() + ((p.length > 1 ? p[p.length - 1][0] : '') || '').toUpperCase(); }
 function toast(t, ok = true) {
   const el = document.getElementById('toast'); document.getElementById('toastT').textContent = t;
   el.querySelector('.tk').style.display = ok ? 'flex' : 'none';
-  el.classList.add('on'); clearTimeout(el._t); el._t = setTimeout(() => el.classList.remove('on'), 1700);
+  el.classList.toggle('bad', !ok);
+  el.classList.add('on'); clearTimeout(el._t); el._t = setTimeout(() => el.classList.remove('on'), ok ? 1500 : 2600);
 }
+function now() { return new Date().toTimeString().slice(0, 5); }
 
-async function login() {
+function applyPending(s) {
+  s.checks = Object.assign({}, s.checks);
+  for (const id in pending) {
+    const p = pending[id];
+    if (p.op === 'in') { if (s.checks[id]) delete pending[id]; else s.checks[id] = p.chk; }
+    else { if (!s.checks[id]) delete pending[id]; else delete s.checks[id]; }
+  }
+  return s;
+}
+function view() { state = applyPending(Object.assign({}, raw)); render(); }   // last server state + open changes
+function setState(s) { store.set('osState', JSON.stringify(s)); raw = s; view(); }
+
+function showApp() {
+  document.getElementById('pinView').style.display = 'none';
+  document.getElementById('app').style.display = 'block';
+  render();
+  if (!timer) timer = setInterval(refresh, 8000);
+}
+async function login(auto) {
   PIN = document.getElementById('pinIn').value.trim();
   if (!PIN) return;
+  if (auto) { const c = store.get('osState'); if (c) { try { raw = JSON.parse(c); view(); showApp(); stamp(null); } catch (e) {} } }
   try {
-    state = await api('getState');
-    try { sessionStorage.setItem('osPin', PIN); } catch (e) {}
-    document.getElementById('pinView').style.display = 'none';
-    document.getElementById('app').style.display = 'block';
-    render(); stamp(true); setInterval(refresh, 8000);
-  } catch (e) { document.getElementById('pinErr').textContent = 'PIN stimmt nicht'; }
+    const s = await api('getState');
+    store.set('osPin', PIN); setState(s); showApp(); stamp(true);
+    if (!auto) haptic('success');
+  } catch (e) {
+    if (e.message === 'PIN') {
+      store.del('osPin'); store.del('osState'); clearInterval(timer); timer = null;
+      document.getElementById('app').style.display = 'none'; document.getElementById('pinView').style.display = 'block';
+      document.getElementById('pinErr').textContent = 'PIN stimmt nicht'; haptic('error');
+    } else if (document.getElementById('app').style.display === 'block') { stamp(false); }
+    else { document.getElementById('pinErr').textContent = 'Keine Verbindung'; haptic('error'); }
+  }
 }
 async function refresh() {
-  if (busy) return;
-  try { state = await api('getState'); render(); stamp(true); } catch (e) { stamp(false); }
+  if (inflight) return;
+  try { const s = await api('getState'); if (!inflight) setState(s); stamp(true); } catch (e) { stamp(false); }
 }
 function stamp(ok) {
-  document.getElementById('live').classList.toggle('off', !ok);
-  document.getElementById('sync').textContent = ok ? 'live · ' + new Date().toTimeString().slice(0, 5) : 'offline';
+  document.getElementById('live').classList.toggle('off', ok === false);
+  document.getElementById('sync').textContent = ok === null ? 'lädt …' : ok ? 'live · ' + now() : 'offline';
 }
 
 function render() {
@@ -239,7 +295,7 @@ function render() {
   rows.sort((a, b) => a.name.localeCompare(b.name, 'de'));
   const sub = r => (r.type === 'LIST' ? 'Friendslist · ' + (state.freeNow ? 'frei bis ' + state.freeUntil : PRICE_LIST + ' €') : 'Gästeliste · Gratis') + (r.chk ? ' · ' + r.chk.time : '');
   document.getElementById('list').innerHTML = rows.length ? rows.map(r =>
-    '<div class="row ' + (r.chk ? 'in' : '') + '" onclick="tap(\'' + r.id + '\')">' +
+    '<div class="row ' + (r.chk ? 'in' : '') + (pending[r.id] ? ' pending' : '') + '" onclick="tap(\'' + r.id + '\')">' +
       '<div class="av">' + esc(initials(r.name)) + '</div>' +
       '<div class="info"><div class="name">' + esc(r.name) + '</div><div class="meta">' + sub(r) + '</div></div>' +
       '<div class="check">' + (r.chk ? CHECK : '') + '</div></div>'
@@ -248,11 +304,13 @@ function render() {
 }
 
 document.getElementById('seg').addEventListener('click', e => {
-  const b = e.target.closest('button'); if (!b) return;
+  const b = e.target.closest('button'); if (!b || b.classList.contains('on')) return;
+  haptic();
   document.querySelectorAll('#seg button').forEach(x => x.classList.remove('on')); b.classList.add('on'); type = b.dataset.t; render();
 });
 document.getElementById('filters').addEventListener('click', e => {
-  const b = e.target.closest('button'); if (!b) return;
+  const b = e.target.closest('button'); if (!b || b.classList.contains('on')) return;
+  haptic();
   document.querySelectorAll('#filters button').forEach(x => x.classList.remove('on')); b.classList.add('on'); tab = b.dataset.f; render();
 });
 
@@ -263,6 +321,7 @@ function closeSheet() { document.getElementById('scrim').classList.remove('on');
 function tap(id) {
   const p = find(id), chk = state.checks[id];
   if (!p) return;
+  haptic();
   const isList = p.type === 'LIST';
   const top = '<div class="sh-top"><div class="av">' + esc(initials(p.name)) + '</div><div><div class="sh-name">' + esc(p.name) +
               '</div><div class="sh-sub">' + (isList ? 'Friendslist' : 'Gästeliste') + '</div></div></div>';
@@ -277,20 +336,39 @@ function tap(id) {
   }
 }
 
-async function run(fn, args, ok) {
-  if (busy) return; busy = true; closeSheet();
+// Optimistic: the change shows at once, the sheet is written in the background; on failure it is rolled back.
+async function send(id, op, fn, args, okText) {
+  inflight++;
   try {
     const r = await api(fn, ...args);
-    if (r && r.ok === false) toast(r.msg || 'Nicht möglich', false); else toast(ok);
-    state = await api('getState'); render(); stamp(true);
-  } catch (e) { toast('Verbindung fehlgeschlagen', false); stamp(false); }
-  busy = false;
+    if (r && r.ok === false) { delete pending[id]; toast(r.msg || 'Nicht möglich', false); haptic('error'); }
+    stamp(true);
+  } catch (e) {
+    delete pending[id]; toast('Nicht gespeichert, keine Verbindung', false); haptic('error'); stamp(false);
+  }
+  inflight--;
+  view();
+  if (!inflight) refresh();
 }
-function doIn(id) { const p = find(id); document.getElementById('q').value = ''; run('checkIn', [id, p.name, p.type, ''], p.name + ' ist drin'); }
-function doUndo(id) { run('undo', [id], 'Rückgängig gemacht'); }
+function doIn(id) {
+  const p = find(id); if (!p || state.checks[id]) return closeSheet();
+  haptic('success'); closeSheet();
+  pending[id] = { op: 'in', chk: { time: now() } };
+  document.getElementById('q').value = '';
+  view(); toast(p.name + ' ist drin');
+  send(id, 'in', 'checkIn', [id, p.name, p.type, ''], p.name);
+}
+function doUndo(id) {
+  haptic(); closeSheet();
+  pending[id] = { op: 'undo' };
+  view(); toast('Rückgängig gemacht');
+  send(id, 'undo', 'undo', [id], '');
+}
 
-try { const saved = sessionStorage.getItem('osPin'); if (saved) { document.getElementById('pinIn').value = saved; login(); } } catch (e) {}
-document.getElementById('pinIn').addEventListener('keydown', e => { if (e.key === 'Enter') login(); });
+document.getElementById('pinIn').addEventListener('keydown', e => { if (e.key === 'Enter') login(false); });
+document.addEventListener('visibilitychange', () => { if (!document.hidden && PIN) refresh(); });
+(() => { const saved = store.get('osPin'); if (saved) { document.getElementById('pinIn').value = saved; login(true); } })();
+if ('serviceWorker' in navigator) window.addEventListener('load', () => navigator.serviceWorker.register('sw.js').catch(() => {}));
 </script>
 </body>
 </html>
